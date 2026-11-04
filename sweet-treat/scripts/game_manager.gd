@@ -236,7 +236,7 @@ func reset_match_state() -> void:
 	round_results.clear()
 
 ## =====================================================================
-## REDE E GAME CENTER (COM ACEITAÇÃO DINÂMICA DE NOVOS JOGADORES)
+## REDE E GAME CENTER
 ## =====================================================================
 
 func authenticate() -> void:
@@ -327,9 +327,14 @@ func _configurar_partida(game_match: GKMatch) -> void:
 		print("[LOBBY] Mudança na partida: %s (conectado: %s)" % [player.alias, connected])
 		if connected:
 			_enviar_handshake_nome()
+		else:
+			# Remove o jogador desconectado dos registros para permitir novas conexões
+			var pid := str(player.game_player_id)
+			connected_players_profiles.erase(pid)
+			connected_players_names.erase(pid)
+
 		call_deferred("_notificar_atualizacao_lobby")
 		
-		# Quando alguém entra, se for o Host e a sala não lotou, continua aceitando mais
 		if is_host and connected_players_profiles.size() < MAX_PLAYERS:
 			call_deferred("_manter_vagas_abertas")
 	)
@@ -337,7 +342,6 @@ func _configurar_partida(game_match: GKMatch) -> void:
 	register_local_player()
 	_enviar_handshake_nome()
 
-	# Se for o Host, reabre as vagas ativamente para aceitar 4º, 5º... 8º jogador
 	if is_host:
 		call_deferred("_manter_vagas_abertas")
 
@@ -348,7 +352,6 @@ func _configurar_partida(game_match: GKMatch) -> void:
 		call_deferred("_notificar_atualizacao_lobby")
 
 
-# Instrução direta para a Apple não fechar o matchmaking após atingir 3 pessoas
 func _manter_vagas_abertas() -> void:
 	if not is_host or current_match == null or matchmaker == null:
 		return
@@ -359,7 +362,7 @@ func _manter_vagas_abertas() -> void:
 	if matchmaker.has_method("add_players"):
 		var req := GKMatchRequest.new()
 		req.max_players = MAX_PLAYERS
-		req.min_players = 1 # Aceita de 1 em 1 novos jogadores no Lobby
+		req.min_players = 1
 		req.player_group = current_room_code
 
 		matchmaker.add_players(current_match, req, func(error: Variant) -> void:
@@ -890,17 +893,31 @@ func host_play_again() -> void:
 
 func _go_play_again() -> void:
 	reset_match_state()
+	_enviar_handshake_nome()
 	call_deferred("change_scene", SCENE_LOBBY)
 
 
 func leave_match() -> void:
 	_left_match = true
 	reset_match_state()
-	current_match = null
+
+	# Desconecta o socket da partida no Game Center
+	if current_match != null:
+		if current_match.has_method("disconnect"):
+			current_match.disconnect()
+		current_match = null
+
+	# Cancela buscas pendentes
+	if matchmaker != null and matchmaker.has_method("cancel"):
+		matchmaker.cancel()
+
 	is_host = false
 	current_room_code = 0
+	_search_id += 1
+	_searching = false
 	connected_players_names.clear()
 	connected_players_profiles.clear()
+
 	call_deferred("change_scene", SCENE_MENU)
 
 ## =====================================================================
