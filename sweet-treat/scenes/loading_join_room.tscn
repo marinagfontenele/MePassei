@@ -2,7 +2,9 @@
 
 [ext_resource type="Script" uid="uid://4d8jbv8l7xkl" path="res://scripts/loading_join_room.gd" id="1_cieep"]
 [ext_resource type="PackedScene" uid="uid://d0823yfca2ihv" path="res://scenes/components/screen_title.tscn" id="1_e6k4h"]
+[ext_resource type="PackedScene" uid="uid://du50c2vu78lg7" path="res://scenes/components/Buttons/purple_button.tscn" id="2_3f7dj"]
 [ext_resource type="FontFile" uid="uid://bbh8euxqxoj4n" path="res://assets/fonts/LilitaOne-Regular.ttf" id="2_cieep"]
+[ext_resource type="Texture2D" uid="uid://bi4dbr2rbo0fj" path="res://assets/images/symbols/xmark.svg" id="3_hugca"]
 [ext_resource type="Texture2D" uid="uid://bdornrvq78kxw" path="res://assets/images/wait_door.svg" id="3_u4h2n"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_0havr"]
@@ -38,6 +40,7 @@ outline_color = Color(0, 0, 0, 1)
 [node name="ConfigurationScreen" type="Panel" unique_id=30360144]
 custom_minimum_size = Vector2(386, 291)
 custom_maximum_size = Vector2(386, 291)
+anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
@@ -52,13 +55,33 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_constants/margin_left = 60
-theme_override_constants/margin_top = 32
-theme_override_constants/margin_right = 60
-theme_override_constants/margin_bottom = 32
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 20
+
+[node name="InfoButton" parent="MarginContainer" unique_id=247859986 instance=ExtResource("2_3f7dj")]
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 0
+
+[node name="TextureRect" type="TextureRect" parent="MarginContainer/InfoButton" unique_id=1396879947]
+custom_minimum_size = Vector2(23, 23)
+custom_maximum_size = Vector2(23, 23)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("3_hugca")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer" unique_id=92155776]
 layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
 
 [node name="Label" parent="MarginContainer/VBoxContainer" unique_id=625587219 instance=ExtResource("1_e6k4h")]
 layout_mode = 2

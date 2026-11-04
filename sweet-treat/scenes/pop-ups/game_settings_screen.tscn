@@ -1,0 +1,159 @@
+[gd_scene format=3 uid="uid://lkbcpxn77jn"]
+
+[ext_resource type="PackedScene" uid="uid://d0823yfca2ihv" path="res://scenes/components/screen_title.tscn" id="1_040a7"]
+[ext_resource type="PackedScene" uid="uid://nq3ijrvktsq7" path="res://scenes/components/Buttons/play_button.tscn" id="1_vt4y3"]
+[ext_resource type="PackedScene" uid="uid://ch8nyd0mj6eql" path="res://scenes/components/Buttons/dark_blue_button.tscn" id="2_cmgaf"]
+[ext_resource type="FontFile" uid="uid://bbh8euxqxoj4n" path="res://assets/fonts/LilitaOne-Regular.ttf" id="2_l7e1r"]
+[ext_resource type="Texture2D" uid="uid://djhw46tpa6tuq" path="res://assets/images/check_active_button.svg" id="3_pgitt"]
+[ext_resource type="Texture2D" uid="uid://cxwtfn08hcafm" path="res://assets/images/check_button.svg" id="4_kpwle"]
+[ext_resource type="PackedScene" uid="uid://cweewlnuywwd8" path="res://scenes/pop-ups/leave_room.tscn" id="7_l7e1r"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_pgitt"]
+bg_color = Color(0, 0, 0, 0.627451)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ftmew"]
+bg_color = Color(0.09019608, 0.27450982, 0.8862745, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 6
+border_color = Color(0.029789373, 0.15309954, 0.6185657, 1)
+corner_radius_top_left = 16
+corner_radius_top_right = 16
+corner_radius_bottom_right = 16
+corner_radius_bottom_left = 16
+corner_detail = 16
+shadow_color = Color(0, 0, 0, 1)
+shadow_size = 2
+shadow_offset = Vector2(2, 4)
+
+[sub_resource type="LabelSettings" id="LabelSettings_popoo"]
+font = ExtResource("2_l7e1r")
+font_size = 32
+outline_size = 1
+outline_color = Color(0, 0, 0, 1)
+shadow_size = 4
+shadow_color = Color(0, 0, 0, 1)
+shadow_offset = Vector2(0.95, 1.91)
+
+[sub_resource type="LabelSettings" id="LabelSettings_2e64o"]
+font = ExtResource("2_l7e1r")
+font_size = 25
+outline_size = 1
+outline_color = Color(0, 0, 0, 1)
+shadow_size = 4
+shadow_color = Color(0, 0, 0, 1)
+shadow_offset = Vector2(0.95, 1.91)
+
+[node name="GameSettingsScreen" type="Panel" unique_id=1837264615]
+custom_minimum_size = Vector2(344, 295)
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_pgitt")
+
+[node name="Panel" type="Panel" parent="." unique_id=1606988498]
+custom_minimum_size = Vector2(344, 295)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -172.0
+offset_top = -147.5
+offset_right = 172.0
+offset_bottom = 147.5
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_ftmew")
+
+[node name="MarginContainer" type="MarginContainer" parent="Panel" unique_id=1231757550]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 17
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 22
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Panel/MarginContainer" unique_id=534640582]
+layout_mode = 2
+size_flags_vertical = 8
+theme_override_constants/separation = 25
+
+[node name="Label" parent="Panel/MarginContainer/VBoxContainer" unique_id=625587219 instance=ExtResource("1_040a7")]
+layout_mode = 2
+size_flags_horizontal = 6
+size_flags_vertical = 2
+text = "Configurações"
+label_settings = SubResource("LabelSettings_popoo")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Panel/MarginContainer/VBoxContainer" unique_id=760744923]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 6
+theme_override_constants/separation = 50
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Panel/MarginContainer/VBoxContainer/HBoxContainer" unique_id=1884596951]
+layout_mode = 2
+size_flags_horizontal = 10
+theme_override_constants/separation = 15
+
+[node name="Label" parent="Panel/MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer" unique_id=755767473 instance=ExtResource("1_040a7")]
+layout_mode = 2
+text = "Sons"
+label_settings = SubResource("LabelSettings_2e64o")
+
+[node name="CheckButton3" type="CheckButton" parent="Panel/MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer" unique_id=1448693392]
+custom_minimum_size = Vector2(77, 33)
+custom_maximum_size = Vector2(100, 33)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 6
+theme_override_icons/checked = ExtResource("3_pgitt")
+theme_override_icons/unchecked = ExtResource("4_kpwle")
+
+[node name="VBoxContainer2" type="VBoxContainer" parent="Panel/MarginContainer/VBoxContainer/HBoxContainer" unique_id=1839938977]
+layout_mode = 2
+size_flags_horizontal = 2
+theme_override_constants/separation = 15
+
+[node name="Label2" parent="Panel/MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer2" unique_id=1125788676 instance=ExtResource("1_040a7")]
+layout_mode = 2
+text = "Vibração"
+label_settings = SubResource("LabelSettings_2e64o")
+
+[node name="CheckButton2" type="CheckButton" parent="Panel/MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer2" unique_id=996487121]
+custom_minimum_size = Vector2(77, 33)
+custom_maximum_size = Vector2(77, 33)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 6
+theme_override_icons/checked = ExtResource("3_pgitt")
+theme_override_icons/unchecked = ExtResource("4_kpwle")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Panel/MarginContainer/VBoxContainer" unique_id=487464558]
+layout_mode = 2
+size_flags_vertical = 8
+theme_override_constants/separation = 10
+
+[node name="PlayButton" parent="Panel/MarginContainer/VBoxContainer/VBoxContainer" unique_id=122511985 instance=ExtResource("1_vt4y3")]
+custom_maximum_size = Vector2(232, 40)
+layout_mode = 2
+text = "Retomar"
+
+[node name="DarkBlueButton" parent="Panel/MarginContainer/VBoxContainer/VBoxContainer" unique_id=1625100217 instance=ExtResource("2_cmgaf")]
+custom_minimum_size = Vector2(232, 40)
+custom_maximum_size = Vector2(232, 40)
+layout_mode = 2
+text = "Sair"
+
+[node name="LeaveRoom" parent="." unique_id=1411481531 instance=ExtResource("7_l7e1r")]
+layout_mode = 1
+anchors_preset = 15
