@@ -76,6 +76,26 @@ func update_lobby_ui() -> void:
 			container.visible = true
 			if card_ready:
 				card.set_profile(players[i])
+				
+				var avatar_texture := card.find_child("AvatarTexture", true, false) as TextureRect
+				
+				if avatar_texture:
+					avatar_texture.custom_maximum_size = Vector2(43, 43)
+					#avatar_texture.size = Vector2(100, 100)
+					avatar_texture.expand_mode = TextureRect.EXPAND_KEEP_SIZE
+					avatar_texture.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+					
+					var parent := avatar_texture.get_parent()
+					
+					if parent is CenterContainer:
+						parent.alignment = BoxContainer.ALIGNMENT_CENTER
+					elif parent is BoxContainer:
+						parent.alignment = BoxContainer.ALIGNMENT_CENTER
+					else:
+						avatar_texture.position = Vector2(
+							(parent.size.x - avatar_texture.size.x) / 2.0,
+							(parent.size.y - avatar_texture.size.y) / 2.0
+						)
 			else:
 				_fill_name_only(card, players[i])
 		elif i < visible_cards and card_ready:
