@@ -8,6 +8,10 @@ extends Node
 const SLOTS_PATH := "MarginContainer/Panel/MarginContainer/ScrollContainer/HBoxContainer"
 # HBoxContainer antigo (3 degraus): fica escondido
 const OLD_PODIUM_PATH := "MarginContainer/HBoxContainer"
+# Painel com a moldura azul/vermelha (é a estilização do scroll)
+const PANEL_PATH := "MarginContainer/Panel"
+# Até esse número de cards cabe na tela: sem rolagem e sem a moldura
+const MAX_CARDS_WITHOUT_SCROLL := 3
 
 var _pressed: bool = false
 
@@ -63,6 +67,8 @@ func _fill_podium() -> void:
 		var top_score: int = full[0]["tomatoes"]
 		ranking = full.filter(func(e): return e["tomatoes"] == top_score)
 
+	_apply_scroll_mode(slots, ranking.size() > MAX_CARDS_WITHOUT_SCROLL)
+
 	# Poucos cards ficam centralizados; com 4 ou mais o conteúdo passa da largura
 	# e o ScrollContainer rola para o lado.
 	if slots is BoxContainer:
@@ -83,6 +89,20 @@ func _fill_podium() -> void:
 			slot.set_panel_colors(colors[0], colors[1], colors[2], colors[3])
 		if slot.has_method("set_player_info"):
 			slot.set_player_info(ranking[i])
+
+
+# Mais de 3 cards: rola para o lado e a moldura aparece.
+# 3 ou menos: sem rolagem e sem a moldura (os cards ficam direto no fundo).
+func _apply_scroll_mode(slots: Node, needs_scroll: bool) -> void:
+	var scroll := slots.get_parent() as ScrollContainer
+	if scroll:
+		scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_AUTO if needs_scroll else ScrollContainer.SCROLL_MODE_DISABLED
+
+	# self_modulate só afeta o desenho do próprio painel (a moldura), não os cards
+	# dentro dele, e não mexe no estilo que você configurou na cena.
+	var panel := get_node_or_null(PANEL_PATH) as CanvasItem
+	if panel:
+		panel.self_modulate.a = 1.0 if needs_scroll else 0.0
 
 
 func _on_next_pressed() -> void:

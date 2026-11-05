@@ -124,6 +124,7 @@ size_flags_horizontal = 3
 layout_mode = 2
 size_flags_horizontal = 6
 size_flags_vertical = 6
+mouse_filter = 2
 theme_override_constants/separation = 10
 
 [node name="RankingPlayer" parent="MarginContainer/VBoxContainer/Panel/MarginContainer/ScrollContainer/VBoxContainer" unique_id=760479635 instance=ExtResource("4_uwxgj")]

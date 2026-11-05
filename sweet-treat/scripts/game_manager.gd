@@ -16,7 +16,7 @@ signal connection_failed(message)
 ## =====================================================================
 
 const MAX_PLAYERS := 8
-const MIN_PLAYERS := 2
+const MIN_PLAYERS := 4
 
 const BLANK_VOTE := "__blank__"
 
@@ -55,6 +55,7 @@ var _auth_pending: bool = false
 var _searching: bool = false
 var _search_id: int = 0
 var _left_match: bool = false
+var _stage_started: bool = false   # host: já liberou a tela dos jogadores (evita liberar duas vezes)
 
 ## =====================================================================
 ## CONFIGURAÇÕES DA SALA
@@ -234,6 +235,7 @@ func reset_match_state() -> void:
 	votes_by_round.clear()
 	player_tomatoes.clear()
 	round_results.clear()
+	_stage_started = false
 
 ## =====================================================================
 ## REDE E GAME CENTER
@@ -335,6 +337,10 @@ func _configurar_partida(game_match: GKMatch) -> void:
 
 		call_deferred("_notificar_atualizacao_lobby")
 		
+		# Quem caiu deixa de ser esperado: pode liberar o que estava aguardando só por ele
+		if not connected:
+			call_deferred("_recheck_after_player_left")
+
 		if is_host and connected_players_profiles.size() < MAX_PLAYERS:
 			call_deferred("_manter_vagas_abertas")
 	)
@@ -371,6 +377,17 @@ func _manter_vagas_abertas() -> void:
 			else:
 				print("[LOBBY] Vagas extras mantidas abertas com sucesso no Game Center.")
 		)
+
+
+# Um jogador saiu da partida. Se os que ficaram já enviaram as perguntas,
+# o host libera a tela dos jogadores (sem esperar quem caiu).
+func _recheck_after_player_left() -> void:
+	if not is_host or _stage_started:
+		return
+	if questions_by_player.is_empty():
+		return   # ainda não estamos na fase de perguntas
+	if have_all_players_sent_questions():
+		host_start_question_display()
 
 
 func _enviar_handshake_nome() -> void:
@@ -521,11 +538,26 @@ func _enviar_pacote_json(packet: Dictionary) -> void:
 ## FLUXO DE CRIAÇÃO E ENVIO DE PERGUNTAS
 ## =====================================================================
 
+# Quantos jogadores da sala já enviaram as perguntas (mostrado na tela de espera)
+func get_questions_submitted_count() -> int:
+	var n := 0
+	for pid in questions_by_player.keys():
+		if connected_players_profiles.has(pid) or connected_players_names.has(pid):
+			n += 1
+	return n
+
+
+# Quantos jogadores a sala tem (o "x de X" da tela de espera)
+func get_questions_expected_count() -> int:
+	var total := connected_players_profiles.size()
+	if total == 0:
+		total = connected_players_names.size()
+	return maxi(1, total)
+
+
+# Todos enviaram? É esta função que decide quando o host libera a tela dos jogadores
 func have_all_players_sent_questions() -> bool:
-	var total_players := connected_players_profiles.size()
-	if total_players == 0:
-		total_players = maxi(1, connected_players_names.size())
-	return questions_by_player.size() >= total_players
+	return get_questions_submitted_count() >= get_questions_expected_count()
 
 
 func _rebuild_game_questions() -> void:
@@ -618,6 +650,9 @@ func host_finalize_and_shuffle_questions() -> void:
 func host_start_question_display() -> void:
 	if not is_host:
 		return
+	if _stage_started:
+		return   # já liberou (pacotes repetidos não liberam de novo)
+	_stage_started = true
 
 	host_finalize_and_shuffle_questions()
 
