@@ -1,5 +1,6 @@
 [gd_scene format=3 uid="uid://cijg758718klc"]
 
+[ext_resource type="Script" uid="uid://rglmgfb3bxb8" path="res://scripts/question_formulation_wait.gd" id="1_h0six"]
 [ext_resource type="Texture2D" uid="uid://uyjevn7qqpkc" path="res://assets/images/backgrounds/radial_background.png" id="2_tpcrq"]
 [ext_resource type="PackedScene" uid="uid://d0823yfca2ihv" path="res://scenes/components/screen_title.tscn" id="3_h0six"]
 [ext_resource type="Texture2D" uid="uid://bm6fdd3tleyp8" path="res://assets/images/wait_tomato.png" id="4_h0six"]
@@ -44,6 +45,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+script = ExtResource("1_h0six")
 
 [node name="TextureRect" type="TextureRect" parent="." unique_id=1848475094]
 layout_mode = 1
