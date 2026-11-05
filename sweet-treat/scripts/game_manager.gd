@@ -325,16 +325,17 @@ func _configurar_partida(game_match: GKMatch) -> void:
 
 	game_match.player_changed.connect(func(player: GKPlayer, connected: bool) -> void:
 		print("[LOBBY] Mudança na partida: %s (conectado: %s)" % [player.alias, connected])
+		var pid := str(player.game_player_id)
+
 		if connected:
 			_enviar_handshake_nome()
 		else:
-			# Remove o jogador desconectado dos registros para permitir novas conexões
-			var pid := str(player.game_player_id)
+			# Limpa o jogador desconectado da memória do Host e dos clientes
 			connected_players_profiles.erase(pid)
 			connected_players_names.erase(pid)
 
 		call_deferred("_notificar_atualizacao_lobby")
-		
+
 		if is_host and connected_players_profiles.size() < MAX_PLAYERS:
 			call_deferred("_manter_vagas_abertas")
 	)
@@ -404,7 +405,8 @@ func _processar_pacote_rede(data: PackedByteArray, _from_player: GKPlayer = null
 			if p_id == "":
 				return
 			var p_name = str(dict.get("name", "Jogador"))
-			var is_new := not connected_players_profiles.has(p_id)
+
+			# Atualiza ou readmite o jogador na lista
 			connected_players_names[p_id] = p_name
 			connected_players_profiles[p_id] = {
 				"name": p_name,
@@ -412,11 +414,25 @@ func _processar_pacote_rede(data: PackedByteArray, _from_player: GKPlayer = null
 				"background": clampi(int(dict.get("background", 0)), 0, backgrounds.size() - 1),
 				"host": bool(dict.get("host", false))
 			}
-			print("[LOBBY] player_info de %s (novo: %s) | total na sala: %d" % [p_name, is_new, connected_players_profiles.size()])
-			
-			if is_new and p_id != _my_id():
+			print("[LOBBY] player_info de %s | total na sala: %d" % [p_name, connected_players_profiles.size()])
+
+			# Responde com o nosso perfil caso seja uma reconexão/novo jogador
+			if p_id != _my_id():
 				_enviar_handshake_nome()
+
 			emit_signal("lobby_updated")
+
+		"leave_room":
+			var p_id = str(dict.get("id", ""))
+			if p_id != "":
+				print("[LOBBY] Jogador pediu para sair: %s" % p_id)
+				connected_players_profiles.erase(p_id)
+				connected_players_names.erase(p_id)
+				_notificar_atualizacao_lobby()
+
+				# Se for o Host e abriu vaga, reabre o matchmaking para novos aparelhos
+				if is_host and connected_players_profiles.size() < MAX_PLAYERS:
+					call_deferred("_manter_vagas_abertas")
 
 		"room_config":
 			config_questions_per_player = int(dict.get("questions_per_player", 1))
@@ -439,7 +455,7 @@ func _processar_pacote_rede(data: PackedByteArray, _from_player: GKPlayer = null
 				questions_by_player[sender_id] = remote_questions
 				_rebuild_game_questions()
 				print("Perguntas recebidas de %s. Total acumulado: %d" % [sender_id, get_total_questions_received()])
-				
+
 				if is_host and have_all_players_sent_questions():
 					call_deferred("host_start_question_display")
 
@@ -894,20 +910,35 @@ func host_play_again() -> void:
 func _go_play_again() -> void:
 	reset_match_state()
 	_enviar_handshake_nome()
+
+	# Se for o Host e a sala ainda não atingiu a capacidade máxima (8),
+	# mantém a busca aberta no Game Center para aceitar novos participantes que entrarem pelo código
+	if is_host and connected_players_profiles.size() < MAX_PLAYERS:
+		call_deferred("_manter_vagas_abertas")
+
 	call_deferred("change_scene", SCENE_LOBBY)
 
 
 func leave_match() -> void:
 	_left_match = true
+
+	# 1. Avisa explicitamente aos outros aparelhos que estamos saindo
+	# para que o Host nos remova da lista imediatamente
+	if current_match != null:
+		_enviar_pacote_json({
+			"type": "leave_room",
+			"id": _my_id()
+		})
+
 	reset_match_state()
 
-	# Desconecta o socket da partida no Game Center
+	# 2. Desconecta o socket da partida no Game Center
 	if current_match != null:
 		if current_match.has_method("disconnect"):
 			current_match.disconnect()
 		current_match = null
 
-	# Cancela buscas pendentes
+	# 3. Cancela buscas pendentes do matchmaker
 	if matchmaker != null and matchmaker.has_method("cancel"):
 		matchmaker.cancel()
 
@@ -915,6 +946,8 @@ func leave_match() -> void:
 	current_room_code = 0
 	_search_id += 1
 	_searching = false
+
+	# Limpa os dados locais
 	connected_players_names.clear()
 	connected_players_profiles.clear()
 

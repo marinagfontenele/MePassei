@@ -1,4 +1,3 @@
-#overall_ranking.gd  ("Pontuação da galera")
 extends Node
 
 @onready var scroll_container: ScrollContainer = $MarginContainer/VBoxContainer/Panel/MarginContainer/ScrollContainer
@@ -61,9 +60,12 @@ func _setup_buttons() -> void:
 	for b in find_children("*", "Button", true, false):
 		var t: String = str(b.text).strip_edges().to_lower()
 		if t == "encerrar":
-			b.pressed.connect(GameManager.leave_match)
+			if not b.pressed.is_connected(GameManager.leave_match):
+				b.pressed.connect(GameManager.leave_match)
 		elif t == "jogar novamente":
 			if GameManager.is_authority():
-				b.pressed.connect(GameManager.host_play_again)
+				b.visible = true
+				if not b.pressed.is_connected(GameManager.host_play_again):
+					b.pressed.connect(GameManager.host_play_again)
 			else:
-				b.visible = false    # só o host recomeça
+				b.visible = false    # Só o host exibe e comanda o recomeço da partida
