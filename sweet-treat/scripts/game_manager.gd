@@ -16,7 +16,7 @@ signal connection_failed(message)
 ## =====================================================================
 
 const MAX_PLAYERS := 8
-const MIN_PLAYERS := 3
+const MIN_PLAYERS := 2
 
 const BLANK_VOTE := "__blank__"
 
@@ -462,6 +462,13 @@ func _processar_pacote_rede(data: PackedByteArray, _from_player: GKPlayer = null
 			emit_signal("questions_synced")
 			print("Host liberou a exibição de perguntas!")
 			call_deferred("change_scene", "res://scenes/show_question.tscn")
+			
+		"start_stage_players":
+			print("Host liberou a tela dos jogadores!")
+			call_deferred(
+				"change_scene",
+				"res://scenes/stage_players_screen.tscn"
+			)
 
 		"player_answer":
 			var remote_player = str(dict.get("player", "Jogador"))
@@ -614,16 +621,19 @@ func host_start_question_display() -> void:
 
 	host_finalize_and_shuffle_questions()
 
+   # Envia as perguntas oficiais para todos
 	_enviar_pacote_json({
 		"type": "official_game_questions",
 		"questions": game_questions
 	})
+	
+	# Primeiro todos vão para a tela dos jogadores
 	_enviar_pacote_json({
-		"type": "start_display_questions",
-		"questions": game_questions
+		"type": "start_stage_players"
 	})
-
-	call_deferred("change_scene", "res://scenes/show_question.tscn")
+	
+	# O host também vai para a tela dos jogadores
+	call_deferred("change_scene", "res://scenes/stage_players_screen.tscn")
 
 ## =====================================================================
 ## RESPOSTAS
