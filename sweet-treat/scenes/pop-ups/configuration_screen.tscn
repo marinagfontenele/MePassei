@@ -42,12 +42,21 @@ shadow_color = Color(0, 0, 0, 1)
 shadow_offset = Vector2(0.95, 1.91)
 
 [node name="ConfigurationScreen" type="Panel" unique_id=30360144]
-custom_minimum_size = Vector2(575, 348)
-custom_maximum_size = Vector2(575, 348)
-anchor_right = 1.0
-anchor_bottom = 1.0
+custom_minimum_size = Vector2(380, 295)
+custom_maximum_size = Vector2(380, 295)
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -287.5
+offset_top = -174.0
+offset_right = 287.5
+offset_bottom = 174.0
 grow_horizontal = 2
 grow_vertical = 2
+size_flags_horizontal = 6
+size_flags_vertical = 6
 theme_override_styles/panel = SubResource("StyleBoxFlat_0havr")
 
 [node name="MarginContainer" type="MarginContainer" parent="." unique_id=1242892489]
@@ -64,7 +73,7 @@ theme_override_constants/margin_bottom = 20
 
 [node name="InfoButton" parent="MarginContainer" unique_id=247859986 instance=ExtResource("1_6ha1o")]
 layout_mode = 2
-size_flags_horizontal = 0
+size_flags_horizontal = 8
 size_flags_vertical = 0
 
 [node name="TextureRect" type="TextureRect" parent="MarginContainer/InfoButton" unique_id=1052020237]
@@ -91,10 +100,11 @@ label_settings = SubResource("LabelSettings_30llq")
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
-theme_override_constants/separation = 121
+theme_override_constants/separation = 61
 
 [node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/HBoxContainer" unique_id=1218390548]
 layout_mode = 2
+size_flags_horizontal = 10
 theme_override_constants/separation = 15
 
 [node name="Label" parent="MarginContainer/HBoxContainer/VBoxContainer" unique_id=2113901413 instance=ExtResource("2_a8tt7")]
@@ -113,6 +123,7 @@ theme_override_icons/unchecked = ExtResource("4_2xdi8")
 
 [node name="VBoxContainer2" type="VBoxContainer" parent="MarginContainer/HBoxContainer" unique_id=84243233]
 layout_mode = 2
+size_flags_horizontal = 2
 theme_override_constants/separation = 15
 
 [node name="Label2" parent="MarginContainer/HBoxContainer/VBoxContainer2" unique_id=453966590 instance=ExtResource("2_a8tt7")]

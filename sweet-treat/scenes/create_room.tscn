@@ -135,7 +135,7 @@ text = "Configurações da partida"
 
 [node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainer" unique_id=375801431]
 layout_mode = 2
-size_flags_vertical = 4
+size_flags_vertical = 6
 theme_override_constants/separation = 36
 
 [node name="Panel" type="Panel" parent="MarginContainer/VBoxContainer/HBoxContainer" unique_id=796115655]
@@ -286,6 +286,9 @@ layout_mode = 2
 [node name="ConfigurationButtonButton3" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/VBoxContainer3/HBoxContainer3" unique_id=787289198 instance=ExtResource("2_g5yfu")]
 layout_mode = 2
 text = "90s"
+
+[node name="Spacer" type="Control" parent="MarginContainer/VBoxContainer" unique_id=882820426]
+layout_mode = 2
 
 [node name="PlayButton" parent="MarginContainer" unique_id=1723046998 instance=ExtResource("6_iju0h")]
 layout_mode = 2

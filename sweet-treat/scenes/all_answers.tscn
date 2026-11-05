@@ -295,7 +295,11 @@ size_flags_horizontal = 3
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="HBoxContainer4" type="HBoxContainer" parent="MarginContainer/VBoxContainer" unique_id=552679863]
+[node name="VBoxContainer2" type="VBoxContainer" parent="MarginContainer/VBoxContainer" unique_id=1681394949]
+layout_mode = 2
+size_flags_vertical = 10
+
+[node name="HBoxContainer4" type="HBoxContainer" parent="MarginContainer/VBoxContainer/VBoxContainer2" unique_id=552679863]
 custom_minimum_size = Vector2(0, 40)
 custom_maximum_size = Vector2(-1, 40)
 layout_mode = 2
@@ -303,7 +307,7 @@ size_flags_horizontal = 4
 size_flags_vertical = 10
 theme_override_constants/separation = 20
 
-[node name="ButtonVoteNull" type="Button" parent="MarginContainer/VBoxContainer/HBoxContainer4" unique_id=1997876517]
+[node name="ButtonVoteNull" type="Button" parent="MarginContainer/VBoxContainer/VBoxContainer2/HBoxContainer4" unique_id=1997876517]
 custom_minimum_size = Vector2(176, 40)
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
@@ -315,7 +319,7 @@ theme_override_styles/pressed = SubResource("StyleBoxFlat_ieid6")
 theme_override_styles/hover = SubResource("StyleBoxFlat_cxwln")
 text = "Pular voto"
 
-[node name="PlayButton" parent="MarginContainer/VBoxContainer/HBoxContainer4" unique_id=122511985 instance=ExtResource("5_cxwln")]
+[node name="PlayButton" parent="MarginContainer/VBoxContainer/VBoxContainer2/HBoxContainer4" unique_id=122511985 instance=ExtResource("5_cxwln")]
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 8
@@ -324,14 +328,14 @@ theme_override_styles/pressed = SubResource("StyleBoxFlat_dk81l")
 theme_override_styles/hover = SubResource("StyleBoxFlat_x3x51")
 text = "Votar"
 
-[node name="HBoxContainer2" type="HBoxContainer" parent="MarginContainer/VBoxContainer" unique_id=1159519630]
+[node name="HBoxContainer2" type="HBoxContainer" parent="MarginContainer/VBoxContainer/VBoxContainer2" unique_id=1159519630]
 custom_minimum_size = Vector2(0, 40)
 custom_maximum_size = Vector2(-1, 40)
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 10
 
-[node name="LabelText" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer2" unique_id=297815938]
+[node name="LabelText" type="Label" parent="MarginContainer/VBoxContainer/VBoxContainer2/HBoxContainer2" unique_id=297815938]
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 0
@@ -340,14 +344,14 @@ label_settings = SubResource("LabelSettings_megxp")
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="HBoxContainer3" type="HBoxContainer" parent="MarginContainer/VBoxContainer" unique_id=1081358734]
+[node name="HBoxContainer3" type="HBoxContainer" parent="MarginContainer/VBoxContainer/VBoxContainer2" unique_id=1081358734]
 custom_minimum_size = Vector2(0, 40)
 custom_maximum_size = Vector2(-1, 40)
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 10
 
-[node name="ButtonNextRound" type="Button" parent="MarginContainer/VBoxContainer/HBoxContainer3" unique_id=1475584993]
+[node name="ButtonNextRound" type="Button" parent="MarginContainer/VBoxContainer/VBoxContainer2/HBoxContainer3" unique_id=1475584993]
 custom_minimum_size = Vector2(236, 40)
 layout_mode = 2
 size_flags_horizontal = 6

@@ -64,13 +64,13 @@ func _build_ui() -> void:
 	var lilita_font = load("res://assets/fonts/LilitaOne-Regular.ttf")
 	_preview.add_theme_font_override("font", lilita_font)
 	_preview.add_theme_color_override(
-		"font_placeholder_color", Color("#dddddd")
+		"font_placeholder_color", Color("dddddd9a")
 	)
 
 	var input_style := StyleBoxFlat.new()
-	input_style.bg_color = Color("#64646488")
+	input_style.bg_color = Color("646464ed")
 	input_style.set_corner_radius_all(40)
-	input_style.set_border_width_all(2)
+	input_style.set_border_width_all(1)
 	input_style.border_color = Color.BLACK
 	input_style.content_margin_left = 24
 	input_style.content_margin_right = 20
@@ -109,7 +109,7 @@ func _build_ui() -> void:
 	var button_normal := StyleBoxFlat.new()
 	button_normal.bg_color = Color("#ffdc35")
 	button_normal.set_corner_radius_all(50)
-	button_normal.set_border_width_all(2)
+	button_normal.set_border_width_all(1)
 	button_normal.border_color = Color.BLACK
 	button_normal.content_margin_left = 0
 	button_normal.content_margin_right = 0
@@ -120,7 +120,7 @@ func _build_ui() -> void:
 	button_hover.bg_color = Color("#ffe45c")
 
 	var button_pressed := button_normal.duplicate()
-	button_pressed.bg_color = Color("#e6c329")
+	button_pressed.bg_color = Color("d2b11fff")
 
 	_confirm.add_theme_stylebox_override("normal", button_normal)
 	_confirm.add_theme_stylebox_override("hover", button_hover)
