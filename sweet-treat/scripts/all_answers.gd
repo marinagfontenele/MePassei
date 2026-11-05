@@ -14,7 +14,8 @@ extends Node
 ## Nós esperados na cena (procurados pelo NOME, em qualquer lugar da árvore):
 ##   TitleLabel, TimerLabel, LabelText, PlayButton ("Votar"),
 ##   ButtonVoteNull ("Pular voto"), ButtonNextRound
-## E dentro do PlayerAnswer (card), opcional: TomatoSplat (tomate amassado).
+## E dentro do PlayerAnswer (card): TomatoSplat (tomate amassado) e TomatoBadge
+## (TextureRect que mostra a imagem de 1, 2 ou 3 pontos de tomate).
 ## =====================================================================
 
 # ---------------------------------------------------------------------
@@ -27,14 +28,25 @@ const TEXT_SKIPPED := "Voto pulado! Aguardando a galera votar..."
 const TEXT_WAITING_NEXT := "Aguardando o host iniciar a próxima rodada..."
 const TEXT_NOBODY := "Ninguém respondeu. Aguardando o host iniciar a próxima rodada..."
 const TEXT_NO_ANSWER := "Sem Resposta"
+const TEXT_LAST_ROUND := "Última rodada finalizada! Aguardando o host liberar o resultado..."
+const BUTTON_NEXT := "Próxima rodada"
+const BUTTON_FINAL := "Liberar resultado"
+
+# Tempo mínimo que quem votou vê o tomate no card antes do resultado aparecer
+const VOTE_FEEDBACK_SECONDS := 1.5
 
 # ---------------------------------------------------------------------
 # CORES (tiradas dos protótipos do Figma; ajuste aqui se precisar)
 # ---------------------------------------------------------------------
 const OWN_CARD_COLOR := Color("#4CA8E4")          # card da própria resposta
 const NO_ANSWER_TEXT_COLOR := Color("#C7C7C7")    # texto "Sem Resposta"
-const BADGE_RED := Color("#EB4A50")               # +2 (ou mais)
-const BADGE_BLUE := Color("#4CA8E4")              # +1
+
+# Imagens de pontos de tomate da rodada (o badge do card é um TextureRect)
+const TOMATO_POINT_TEXTURES := {
+	1: preload("res://assets/images/one_tomato_point.png"),
+	2: preload("res://assets/images/two_tomato_points.png"),
+	3: preload("res://assets/images/three_tomato_points.png"),
+}
 
 const URGENT_SECONDS := 10    # a partir daqui o timer fica vermelho
 const FALLBACK_GRACE := 6.0   # quem não é host espera isso a mais pelo resultado do host
@@ -63,6 +75,10 @@ var _time_left: float = 0.0
 var _grace_left: float = FALLBACK_GRACE
 var _timer_running: bool = false
 var _last_second: int = -1
+var _vote_feedback_left: float = 0.0
+var _reveal_pending: bool = false
+var _resolve_pending: bool = false      # host: todos votaram, esperando o tempo do tomate
+var _resolve_delay_left: float = 0.0
 
 @onready var vote_button: Button = _find_node("PlayButton") as Button
 @onready var skip_button: Button = _find_node("ButtonVoteNull") as Button
@@ -269,17 +285,13 @@ func _paint_card(card: Node, color: Color, stroke_color: Color) -> void:
 			card.add_theme_stylebox_override(shape, s)
 
 
-# Badge de tomates: vermelho para +2 (ou mais), azul para +1
-func _style_badge(badge: Node, tomatoes: int) -> void:
-	if not (badge is Label):
+# Badge de tomates: mostra a imagem de 1, 2 ou 3 pontos (o máximo numa rodada é 3)
+func _show_tomato_badge(badge: Node, tomatoes: int) -> void:
+	if not (badge is TextureRect):
+		push_warning("TomatoBadge precisa ser um TextureRect.")
 		return
-	var color: Color = BADGE_RED if tomatoes >= 2 else BADGE_BLUE
-	badge.add_theme_color_override("font_color", color)
-	var style = badge.get_theme_stylebox("normal")
-	if style is StyleBoxFlat:
-		var s: StyleBoxFlat = style.duplicate()
-		s.border_color = color
-		badge.add_theme_stylebox_override("normal", s)
+	badge.texture = TOMATO_POINT_TEXTURES[clampi(tomatoes, 1, 3)]
+	badge.visible = true
 
 
 # Depois de votar / no resultado: cards não reagem mais ao mouse (sem hover),
@@ -324,6 +336,7 @@ func _submit_vote(target_id: String) -> void:
 	if has_voted or is_revealing:
 		return
 	has_voted = true
+	_vote_feedback_left = VOTE_FEEDBACK_SECONDS
 
 	var skipped: bool = (target_id == GameManager.BLANK_VOTE)
 
@@ -353,10 +366,28 @@ func _check_all_votes_received() -> void:
 
 	var votes: int = GameManager.votes_by_round.get(r, {}).size()
 	if votes >= GameManager.get_expected_players_count() and GameManager.is_authority():
-		GameManager.host_resolve_round(r)
+		# Espera o tempo do tomate antes de fechar: assim todos veem o resultado juntos
+		if not _resolve_pending:
+			_resolve_pending = true
+			_resolve_delay_left = VOTE_FEEDBACK_SECONDS
 
 
 func _process(delta: float) -> void:
+	# Resultado que chegou cedo demais espera o tempo do tomate terminar
+	if _vote_feedback_left > 0.0:
+		_vote_feedback_left -= delta
+		if _vote_feedback_left <= 0.0 and _reveal_pending:
+			_reveal_pending = false
+			_reveal_results()
+			return
+
+	# Host: todos votaram, fecha a rodada depois do tempo do tomate
+	if _resolve_pending:
+		_resolve_delay_left -= delta
+		if _resolve_delay_left <= 0.0:
+			_resolve_pending = false
+			GameManager.host_resolve_round(GameManager.current_question_index)
+
 	if not _timer_running or is_revealing:
 		return
 
@@ -416,6 +447,12 @@ func _reveal_results() -> void:
 	var r: int = GameManager.current_question_index
 	if not GameManager.round_results.has(r):
 		return
+
+	# Quem acabou de votar (ex.: o último) vê o tomate no card por um instante
+	if has_voted and _vote_feedback_left > 0.0:
+		_reveal_pending = true
+		return
+
 	is_revealing = true
 	_timer_running = false
 
@@ -440,21 +477,26 @@ func _reveal_results() -> void:
 		var tomatoes: int = int(penalties.get(c["id"], 0))
 		var badge = c["badge"]
 		if badge:
-			badge.visible = tomatoes > 0
+			badge.visible = false
 			if tomatoes > 0:
-				if badge is Label:
-					badge.text = "+%d" % tomatoes
-				_style_badge(badge, tomatoes)
+				_show_tomato_badge(badge, tomatoes)
+
+	# Última rodada: o botão do host vira "Liberar resultado" e os outros são avisados
+	var is_last_round: bool = not GameManager.has_next_question()
 
 	# No lugar do texto: host vê o botão, os outros veem a mensagem
 	if GameManager.is_authority():
 		if info_label:
 			info_label.visible = false
 		if next_round_button:
+			next_round_button.text = BUTTON_FINAL if is_last_round else BUTTON_NEXT
 			next_round_button.disabled = false
 			next_round_button.visible = true
 	else:
-		_show_info(TEXT_NOBODY if nobody_answered else TEXT_WAITING_NEXT)
+		if is_last_round:
+			_show_info(TEXT_LAST_ROUND)
+		else:
+			_show_info(TEXT_NOBODY if nobody_answered else TEXT_WAITING_NEXT)
 
 
 func _on_next_round_pressed() -> void:
@@ -474,7 +516,7 @@ func _on_next_round(r_idx: int) -> void:
 	if GameManager.advance_to_next_question():
 		GameManager.change_scene("res://scenes/show_question.tscn")
 	else:
-		GameManager.change_scene("res://scenes/worst_result_screen.tscn")
+		GameManager.change_scene(GameManager.SCENE_BEST)   # primeiro: tela dos melhores
 
 
 ## =====================================================================
