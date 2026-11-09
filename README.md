@@ -1,4 +1,4 @@
-# MePassei
+## 🍅 MePassei
 
 **Um jogo de perguntas, respostas e descobertas entre amigos!**
 
@@ -111,5 +111,5 @@ Repositório: [github.com/marinagfontenele/MePassei](https://github.com/marinagf
 ---
 
 <p align="center">
-  <strong>MePassei</strong> — Mais perguntas, mais risadas e mais tomates!
+ 🍅 <strong>MePassei</strong> — Mais perguntas, mais risadas e mais tomates!
 </p>
