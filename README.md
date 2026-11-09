@@ -1,8 +1,8 @@
-# SweetTreats
+# MePassei
 
 **Um jogo de perguntas, respostas e descobertas entre amigos!**
 
-Sweet-Treat é um jogo multiplayer desenvolvido na Godot, no qual os jogadores se reúnem em uma sala para responder perguntas, descobrir o que os amigos realmente pensam e competir por pontos.
+MePassei é um jogo multiplayer desenvolvido na Godot, no qual os jogadores se reúnem em uma sala para responder perguntas, descobrir o que os amigos realmente pensam e competir por pontos.
 
 Com uma proposta descontraída e divertida, o jogo transforma opiniões, respostas inesperadas e situações engraçadas em momentos de interação entre amigos.
 
@@ -10,7 +10,7 @@ Com uma proposta descontraída e divertida, o jogo transforma opiniões, respost
 
 ## 🎮 Sobre o jogo
 
-O Sweet-Treat é um jogo social de perguntas e respostas em grupo. Cada participante contribui criando perguntas que serão apresentadas aos demais jogadores.
+O MePassei é um jogo social de perguntas e respostas em grupo. Cada participante contribui criando perguntas que serão apresentadas aos demais jogadores.
 
 Durante as partidas, os jogadores respondem às perguntas individualmente, visualizam as respostas do grupo e participam de votações para escolher as respostas que mais se destacaram.
 
@@ -73,7 +73,7 @@ Ao término das rodadas, os jogadores podem visualizar o ranking da partida e de
 
 ## 🍅 Sistema de pontuação
 
-O Sweet-Treat utiliza tomates como representação dos pontos conquistados pelos jogadores.
+O MePassei utiliza tomates como representação dos pontos conquistados pelos jogadores.
 
 A pontuação segue as seguintes regras:
 
@@ -106,7 +106,7 @@ A tipografia principal utilizada no projeto é a **Lilita One**, que contribui p
 
 Projeto desenvolvido por **Marina Gomes Fontenele, Rita Alice Lobão, Sure Rocha, Letícia Freitas e Cintia Raquel**.
 
-Repositório: [github.com/marinagfontenele/Sweet-Treat](https://github.com/marinagfontenele/Sweet-Treat)
+Repositório: [github.com/marinagfontenele/MePassei](https://github.com/marinagfontenele/MePassei)
 
 ---
 
