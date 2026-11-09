@@ -111,5 +111,5 @@ Repositório: [github.com/marinagfontenele/MePassei](https://github.com/marinagf
 ---
 
 <p align="center">
-  🍬 <strong>Sweet-Treat</strong> — Mais perguntas, mais risadas e mais tomates!
+  <strong>MePassei</strong> — Mais perguntas, mais risadas e mais tomates!
 </p>
